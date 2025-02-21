@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        ::-webkit-scrollbar { width: 2px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: rgb(227, 227, 227); border-radius: 1px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgb(192, 192, 192); }
+    </style>
+    <title>Data Submissions Portal</title>
+</head>
+<body class="bg-gray-100 text-gray-900 min-h-screen flex flex-col lg:h-screen">
+    <header class="bg-gray-800 text-white py-4 flex-shrink-0">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <div class="text-xl font-semibold">Dashboard</div>
+            <nav class="flex items-center space-x-6">
+                <a href="#" class="hover:text-gray-300 transition-colors">Report</a>
+                {% if user.is_authenticated %}
+                    <span class="text-sm font-medium">{{ user.username }}</span>
+                    <a href="{% url 'account_logout' %}" class="hover:text-gray-300 transition-colors">Logout</a>
+                {% else %}
+                    <a href="{% url 'account_login' %}" class="hover:text-gray-300 transition-colors">Login</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+    <div id="notification" class="container mx-auto mt-4 px-6 hidden"></div>
+    <main class="container mx-auto mt-6 mb-6 p-6 bg-white shadow-md rounded-lg flex-grow overflow-hidden">
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="text-center text-sm text-gray-600 py-4 flex-shrink-0">
+        © 2025 Min Sik Hein (Direwen)
+    </footer>
+    <script>
+        document.body.addEventListener('showNotification', function(event) {
+            const notification = document.getElementById('notification');
+            const message = event.detail.message;
+            notification.innerHTML = message;
+            notification.classList.remove('hidden');
+            notification.classList.add('bg-red-100', 'text-red-800', 'p-4', 'rounded-lg', 'mb-4');
+            setTimeout(() => {
+                notification.classList.add('hidden');
+                notification.classList.remove('bg-red-100', 'text-red-800', 'p-4', 'rounded-lg', 'mb-4');
+            }, 3000);
+        });
+    </script>
+</body>
+</html>

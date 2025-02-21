@@ -1,0 +1,52 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+*.venv
+
+# Django migration files (optional, exclude if not collaborating)
+*/migrations/*
+!*/migrations/__init__.py
+
+# SQLite database (if using)
+db.sqlite3
+*.sqlite3
+
+# Django secret key and settings overrides
+.env
+*.env
+config/settings/local.py  # If you have different settings for local/prod
+
+# Static and media files (optional, can be regenerated)
+staticfiles/
+media/
+
+# Logs and temporary files
+*.log
+*.pot
+*.mo
+*.swp
+*.swo
+*.swn
+*.bak
+.DS_Store
+Thumbs.db
+
+# Node.js (if using for frontend assets)
+node_modules/
+package-lock.json
+yarn.lock
+
+# VS Code and JetBrains settings (if using)
+.vscode/
+.idea/
+
+# Coverage and testing
+htmlcov/
+coverage.xml
+*.cover
+.pytest_cache/
