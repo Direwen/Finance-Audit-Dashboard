@@ -1,9 +1,12 @@
-from django.views.generic import ListView
+from django.views.generic import ListView, TemplateView
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Sum
 from .models import Transaction
 from django.http import HttpResponse
 
+
+# TRANSACTION AUDIT DASHBOARD PAGE
 class TransactionListView(LoginRequiredMixin, ListView):
     model = Transaction
     context_object_name = "transactions"
@@ -77,3 +80,18 @@ def toggle_flag(request, pk):
         transaction.save()
     context = {"transaction": transaction}
     return render(request, "partials/audit_row.html", context)
+
+# REPORT PAGE
+class TransactionReportView(LoginRequiredMixin, TemplateView):
+    template_name = "report.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['status_totals'] = {
+            Transaction.COMPLETE_STATUS : Transaction.objects.filter(status=Transaction.COMPLETE_STATUS).aggregate(total=Sum("amount"))["total"],
+            Transaction.FAILED_STATUS : Transaction.objects.filter(status=Transaction.FAILED_STATUS).aggregate(total=Sum("amount"))["total"],
+            Transaction.PENDING_STATUS : Transaction.objects.filter(status=Transaction.PENDING_STATUS).aggregate(total=Sum("amount"))["total"]
+        }
+        merchant_totals = Transaction.objects.values("merchant").filter(status=Transaction.COMPLETE_STATUS).annotate(total=Sum("amount"))
+        context["merchant_totals"] = list(merchant_totals)
+        return context

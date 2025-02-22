@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://unpkg.com/htmx.org@2.0.4"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    {% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script> {% endcomment %}
+    {% comment %} <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.min.js"></script> {% endcomment %}
+    {% comment %} <script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1/dist/chart.umd.min.js"></script> {% endcomment %}
+
     <style>
         ::-webkit-scrollbar { width: 2px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
@@ -16,9 +20,11 @@
 <body class="bg-gray-100 text-gray-900 min-h-screen flex flex-col lg:h-screen">
     <header class="bg-gray-800 text-white py-4 flex-shrink-0">
         <div class="container mx-auto px-6 flex justify-between items-center">
-            <div class="text-xl font-semibold">Dashboard</div>
+            <a href="{% url 'index' %}"><div class="text-xl font-semibold">Dashboard</div></a>
             <nav class="flex items-center space-x-6">
-                <a href="#" class="hover:text-gray-300 transition-colors">Report</a>
+
+                <a href="{% url 'report' %}" class="hover:text-gray-300 transition-colors">Report</a>
+
                 {% if user.is_authenticated %}
                     <span class="text-sm font-medium">{{ user.username }}</span>
                     <a href="{% url 'account_logout' %}" class="hover:text-gray-300 transition-colors">Logout</a>
@@ -35,6 +41,7 @@
     <footer class="text-center text-sm text-gray-600 py-4 flex-shrink-0">
         © 2025 Min Sik Hein (Direwen)
     </footer>
+
     <script>
         document.body.addEventListener('showNotification', function(event) {
             const notification = document.getElementById('notification');

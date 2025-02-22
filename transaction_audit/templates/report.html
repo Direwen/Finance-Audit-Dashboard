@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="flex flex-col min-h-screen p-8 bg-gray-50">
+    <h1 class="text-3xl font-semibold text-gray-800 mb-8">Transaction Reports</h1>
+
+    <!-- Charts Container -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Status Totals Chart (Pie Chart) -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-medium text-gray-700 mb-4">Total Amounts by Status</h2>
+            <div class="max-w-md mx-auto">
+                <canvas id="statusChart" width="400" height="400"></canvas>
+                {{ status_totals|json_script:"status-data" }}
+                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        if (typeof Chart === 'undefined') {
+                            console.error('Chart.js not loaded!');
+                            return;
+                        }
+                        const ctx = document.getElementById('statusChart').getContext('2d');
+                        const statusTotals = JSON.parse(document.getElementById('status-data').textContent);
+                        console.log('Status Totals:', statusTotals);
+                        const labels = ['Completed', 'Pending', 'Failed'];
+                        const data = [statusTotals.C, statusTotals.P, statusTotals.F];
+                        new Chart(ctx, {
+                            type: 'pie',
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: 'Total Amount ($)',
+                                    data: data,
+                                    backgroundColor: ['#10B981', '#F59E0B', '#EF4444'],
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    title: { display: true, text: 'Transaction Totals by Status' },
+                                    legend: { position: 'bottom' },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function (tooltipItem) {
+                                                return `${tooltipItem.label}: $${tooltipItem.raw.toLocaleString()}`;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+
+        <!-- Merchant Totals Chart (Bar Chart) -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-medium text-gray-700 mb-4">Completed Total Amounts by Merchant</h2>
+            <div class="max-w-4xl mx-auto">
+                <canvas id="merchantChart" width="800" height="400"></canvas>
+                {{ merchant_totals|json_script:"merchant-data" }}
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        if (typeof Chart === 'undefined') {
+                            console.error('Chart.js not loaded!');
+                            return;
+                        }
+                        const ctx = document.getElementById('merchantChart').getContext('2d');
+                        const merchantTotals = JSON.parse(document.getElementById('merchant-data').textContent);
+                        console.log('Merchant Totals:', merchantTotals);
+                        const labels = merchantTotals.map(merchant => merchant.merchant);
+                        const data = merchantTotals.map(merchant => parseFloat(merchant.total));
+                        new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: 'Total Amount ($)',
+                                    data: data,
+                                    backgroundColor: '#3B82F6',
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    title: { display: true, text: 'Completed Transaction Totals by Merchant' },
+                                    legend: { display: false },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function (tooltipItem) {
+                                                return `$${tooltipItem.raw.toLocaleString()}`;
+                                            }
+                                        }
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        ticks: {
+                                            callback: function (value) {
+                                                return `$${value.toLocaleString()}`;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
