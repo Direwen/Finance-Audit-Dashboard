@@ -2,8 +2,10 @@ from django.views.generic import ListView, TemplateView
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Sum
-from .models import Transaction
 from django.http import HttpResponse
+from rest_framework.generics import ListAPIView
+from .models import Transaction
+from .serializers import TransactionSerializer
 
 
 # TRANSACTION AUDIT DASHBOARD PAGE
@@ -95,3 +97,9 @@ class TransactionReportView(LoginRequiredMixin, TemplateView):
         merchant_totals = Transaction.objects.values("merchant").filter(status=Transaction.COMPLETE_STATUS).annotate(total=Sum("amount"))
         context["merchant_totals"] = list(merchant_totals)
         return context
+    
+#API VIEWSETS
+class TransactionViewSet(ListAPIView):
+    queryset = Transaction.objects.all()
+    serializer_class = TransactionSerializer
+    
