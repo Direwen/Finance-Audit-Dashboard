@@ -6,7 +6,9 @@ urlpatterns = [
     path("flag/<int:pk>", toggle_flag, name="flag"),
     path("approve/<int:pk>/", approve_transaction, name="approve_transaction"),
     path("fail/<int:pk>/", fail_transaction, name="fail_transaction"),
+    
     path("history/<int:pk>/", TransactionHistoryView.as_view(), name="transaction-history"),
+    
     path("report/", TransactionReportView.as_view(), name="report"),
     
     path("api/transactions", TransactionViewSet.as_view(), name="api-transactions")
