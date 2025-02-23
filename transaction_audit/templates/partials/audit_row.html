@@ -66,4 +66,7 @@
         <span class="text-gray-400 text-xs italic">No actions</span>
         {% endif %}
     </td>
+    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+        <a href="{% url 'transaction-history' transaction.pk %}" class="text-blue-500 hover:text-blue-700">View History</a>
+    </td>
 </tr>

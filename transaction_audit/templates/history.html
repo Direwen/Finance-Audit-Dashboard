@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="flex flex-col h-full p-8 bg-gray-50">
+    <h1 class="text-3xl font-semibold text-gray-800 mb-8">
+        History for {{ transaction.merchant }} - ${{ transaction.amount }}
+    </h1>
+    <div class="bg-white rounded-lg shadow-md p-6 overflow-x-auto">
+        <div class="max-h-96 overflow-y-auto">
+            <table class="w-full table-auto min-w-max">
+                <thead class="bg-gray-100 sticky top-0 z-10">
+                    <tr>
+                        <th class="px-4 py-2 text-left text-gray-600">Date</th>
+                        <th class="px-4 py-2 text-left text-gray-600">User</th>
+                        <th class="px-4 py-2 text-left text-gray-600">Status</th>
+                        <th class="px-4 py-2 text-left text-gray-600">Flagged</th>
+                        <th class="px-4 py-2 text-left text-gray-600">Change Type</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    {% for record in history_records %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-2 whitespace-nowrap">{{ record.history_date }}</td>
+                        <td class="px-4 py-2 whitespace-nowrap">{{ record.history_user.username|default:"N/A" }}</td>
+                        <td class="px-4 py-2 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                {% if record.status == 'P' %}bg-yellow-100 text-yellow-800
+                                {% elif record.status == 'C' %}bg-green-100 text-green-800
+                                {% elif record.status == 'F' %}bg-red-100 text-red-800{% endif %}">
+                                {{ record.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-2 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                {% if record.is_flagged %}bg-pink-100 text-pink-800{% else %}bg-gray-100 text-gray-800{% endif %}">
+                                {{ record.is_flagged|yesno:"Yes,No" }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-2 whitespace-nowrap">
+                            {% if record.history_type == '+' %}Created
+                            {% elif record.history_type == '~' %}Updated
+                            {% elif record.history_type == '-' %}Deleted
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="px-4 py-4 text-center text-gray-500">No history available.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <a href="{% url 'index' %}" class="mt-4 inline-block text-blue-500 hover:text-blue-700">Back to Dashboard</a>
+</div>
+{% endblock %}

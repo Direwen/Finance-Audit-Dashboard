@@ -1,4 +1,4 @@
-from django.views.generic import ListView, TemplateView
+from django.views.generic import ListView, TemplateView, DetailView
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Sum
@@ -82,6 +82,17 @@ def toggle_flag(request, pk):
         transaction.save()
     context = {"transaction": transaction}
     return render(request, "partials/audit_row.html", context)
+
+# History
+class TransactionHistoryView(LoginRequiredMixin, DetailView):
+    model = Transaction
+    template_name = "history.html"
+    context_object_name = "transaction"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["history_records"] = self.object.history.all().order_by('-history_date')
+        return context
 
 # REPORT PAGE
 class TransactionReportView(LoginRequiredMixin, TemplateView):
