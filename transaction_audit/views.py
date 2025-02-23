@@ -100,6 +100,6 @@ class TransactionReportView(LoginRequiredMixin, TemplateView):
     
 #API VIEWSETS
 class TransactionViewSet(ListAPIView):
-    queryset = Transaction.objects.all()
+    queryset = Transaction.objects.select_related("approved_by").all()
     serializer_class = TransactionSerializer
     
